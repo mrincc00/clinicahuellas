@@ -1,4 +1,4 @@
-
+<?php session_start() ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -6,7 +6,9 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
-               <script language="javascript" src="../assets/js/cliente.js"></script>
+                <script language="javascript" src="../assets/js/cliente.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script language="javascript" src="js/jquery-1.2.6.min.js"></script>
 
 	</head>
 	<body id="body">
@@ -58,12 +60,72 @@
 						<label style="width:30%;float:left;text-align:right;padding-right:5%" for="password">Contraseña:</label><input disabled type="password" name="password" placeholder="Contraseña" id="password" style="width:70%; float:right;"/><br/><br/><br/>
 						<button type="button" style=" font-size:70%;" onclick="editarCliente();" id="botonEditar">Modificar datos</button>
 						<input type="submit" value="GUARDAR CAMBIOS" name="registrar" style="font-weight:900; font-size:70%;" disabled id="guardarCambios" onclick="guardarCambios();" />	
-                                                 
+                                                 <?php session_start(); 
+$usuario=$_SESSION['usuario']; 
+$nombre=$_SESSION['nombre'];
+$password=$_SESSION['password'];
+$email=$_SESSION['email'];
+echo "<button type='button' style='font-size:60%;' onclick='rellenar(\"$usuario\",\"$password\",\"$nombre\",\"$email\"); cancelarUsuario();' id='botonCancelarUsuario' disabled>Cancelar</button>";	
+?>						
 					</form>
-					
+					<div id="mascotas" style="">
+						<h1><strong> MASCOTAS </strong></h1>
+						<table id="myTable" >
+							<tr>
+								<th> Nombre </th>
+								<th> Raza </th>
+								<th> Edad </th>
+								<th> Historial </th>
+							</tr>
+<?php
+include '../connect.php';
+
+$usuario=$_SESSION['usuario'];
+if (!($sentencia = $conn->prepare("SELECT nombre,edad,raza,id FROM `Mascotas` WHERE `usuario`='$usuario'"))) {
+          echo "Fallo en la preparación: (" . $conn->errno . ") " . $conn->error;
+        }
+
+        if (!$sentencia->execute()) {
+          echo "Fallo la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+        }
+        if (!($result = $sentencia->get_result())) {
+		      echo "No se ha podido establecer la conexion con el servidor";
+	}
+	if ($result->num_rows > 0) {
+             $nombres = array();
+
+	     while($row = $result->fetch_array()){	    
+array_push($nombres,$row[0],$row[1],$row[2],$row[3]);
+
+                  $nombre=$row[0];
+                  $edad=$row[1];
+                  $raza=$row[2];
+                  $id=$row[3];
+                  echo "<tr id='$id'><td><h1>$nombre</h1></td><td>$raza</td><td>$edad</td><td><button onclick='abrir($id)' style='border-radius:15px; padding-left:2%; padding-right:2%;'>-historial-</button></td></tr>";
+echo"\n";
+             }
+        }
+        else{
+             echo "<p> No existen mascotas aún, añade los datos de tu mascota</p>";
+        }
+
+?>
+						</table>
+						<button id="botonMascota" onclick="insertarMascota();"> Añadir</button>
+						<button id="botonEditarMascota" onclick="editarMascota();"> Editar </button>
+						<button id="botonEliminar" onclick="eliminar();"> Eliminar</button>	
+						<button id="botonMascotaEditada"  disabled> Guardar cambios </button>
+                                                <button id="botonCancelar" disabled>Cancelar</button>
+					</div>
 				</div>
 	</body>
-           <script>
+              <script>
+                  function rellenar(usuario,password,nombre,email){
+                      document.getElementById("nombre").value=nombre;
+                      document.getElementById("email").value=email;
+                      document.getElementById("usuario").value=usuario;
+                      document.getElementById("password").value=password;
+                  }
                   function cambiar(){
                       var usuario=document.getElementById("usuario").value;
                       var password=document.getElementById("password").value;
@@ -80,7 +142,58 @@
                   function error( valor){
                       if(valor==1) alert("Usuario modificado");
                   }
+                  function abrir(id){
 
+                      window.open('historial.php?id='+id,'child','top=200,left=400,width=600,height=400') ; 
+                  }
+                  function cambiarBotones(valor,id){
+                      var fila=valor;
+                      document.getElementById("botonMascota").disabled=true;
+                      document.getElementById("botonEditarMascota").disabled=true;
+                      document.getElementById("botonEliminar").disabled=true;
+                      document.getElementById("botonCancelar").removeAttribute("disabled");
+                      document.getElementById("botonMascotaEditada").removeAttribute("disabled");
+                      document.getElementById("botonCancelar").setAttribute("onclick","cambio("+fila+");");
+                      document.getElementById("botonMascotaEditada").setAttribute("onclick","mascotaEditada('editar','"+fila+"','"+id+"')");
+                  }
+                  function cambio(fila){
+                      var row=document.getElementsByTagName("tr")[fila];
+                      row.setAttribute("contenteditable","false");
+                      row.removeAttribute("style");
+                      //$('#mascotas').load('#mascotas');
+                      location.href="clienteDatos.php";
+                  }
+
+	</script>
+        <?php
+           include_once 'connect.php';
+           $usuario=$_SESSION["usuario"];
+           $password=$_SESSION["password"];
+           $nombre=$_SESSION["nombre"];
+           $email=$_SESSION["email"];
+           echo "<script>window.onload=function() {";
+          if (!empty($_GET)) {
+                if($_GET['accion']!=null){
+                   $accion=$_GET['accion'];
+                   echo "error($accion);";
+                }
+                if($_GET['mascota']!=null){
+                    $fila=$_GET['mascota'];
+                    $id=$_GET['id'];
+                    echo "var filas=document.getElementsByTagName('tr');";
+                    echo "filas[$fila].setAttribute('contenteditable', 'true');";
+                    echo"filas[$fila].style='border: 2px solid black';";
+                    echo "cambiarBotones(".$fila.",".$id.");";
+                }
+          }    
+           echo "rellenar('".$usuario."','".$password."','".$nombre."','".$email."');";
+           echo "}</script>";
+        ?>
+<?php
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
+
+<script>
 function abrirMenu(valor){
 if(valor==0){
 document.getElementById("desplegable").style.display='block';
@@ -93,6 +206,5 @@ document.getElementById("etiquetaMenu").onclick="return abrirMenu(0)";
 return false;
 }
 </script>          
-   
               
 </html>
