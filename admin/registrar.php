@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -6,6 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
+                <script language="javascript" src="../assets/js/admin.js"></script>
 	</head>
 	<body>
 
@@ -95,5 +96,85 @@
 		</article>	
 
 	</body>
+<?php 
+include '../connect.php';
+if($_GET!=null){$valor=$_GET['accion'];
+echo"<script>window.onload=function(){ if($valor==1) alert('Registro completo'); if($valor==2) alert('Usuario ocupado, pruebe con otro'); if($valor==3) alert('Usuario modificado');}</script>";
+}
+if($_POST!=null){
+   $modo=$_POST['modificar'];
+   $usuario=$_POST['usuarioBusqueda'];
 
+  if($modo=="modificar"){
+   if (!($sentencia = $conn->prepare("SELECT password, nombre, email, tipo FROM `Usuarios` WHERE `usuario`='$usuario'"))) {
+              echo "Falló la preparación: (" . $conn->errno . ") " . $conn->error;
+            }
+             if (!$sentencia->execute()) {
+              echo "Falló la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+            }
+            if (!($result = $sentencia->get_result())) {
+              echo "No se ha podido establecer la conexión con el servidor";
+            }
+            if ($result->num_rows > 0) {
+             $nombres = array();
+
+	     while($row = $result->fetch_array()){
+		    array_push($nombres,$row[0],$row[1],$row[2],$row[3]);
+	     }
+             if($nombres!=null){
+                  $password=$nombres[0];
+                  $nombre=$nombres[1];
+                  $email=$nombres[2];
+                  $tipo=$nombres[3];  
+echo "<script> window.onload=function(){ document.getElementById('usuario').value='$usuario';
+document.getElementById('password').value='$password'; 
+document.getElementById('confirmPassword').value='$password'; 
+document.getElementById('nombre').value='$nombre';
+document.getElementById('email').value='$email';
+document.getElementById('tipoUsuario').style='display:none';
+document.getElementById('submitRegistrar').disabled=true;
+document.getElementById('submitGuardar').disabled=false;
+document.getElementById('botonModificarUsuario').disabled=true;
+document.getElementById('botonRegistrar').disabled=false;
+document.getElementById('cancelarRegistrar').setAttribute('onclick','document.getElementById(\"formRegistro\").reset();modificarUsuario();'); 
+document.getElementById('botonRegistrar').setAttribute('onclick','registrarNuevo(\"cambiar\");');
+document.getElementById('usuario').disabled=true;
+ }</script>";
+             }
+        }
+        else  echo "<script> window.onload=function(){ alert('No existe $usuario');}</script>";
+}
+    if($modo=="eliminar"){
+         if (!($sentencia = $conn->prepare("DELETE FROM `Usuarios` WHERE `usuario`='$usuario'"))) {
+              echo "Falló la preparación: (" . $conn->errno . ") " . $conn->error;
+         }
+         if (!$sentencia->execute()) {
+              echo "Falló la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+         }
+         else if($sentencia->affected_rows==0) echo "<script> document.getElementsByTagName('body')[0].onload=function(){ alert(\"Este usuario $usuario no existe\");}</script>";
+         else echo "<script> document.getElementsByTagName('body')[0].onload=function(){ alert('Usuario $usuario eliminado correctamente');}</script>";
+
+    }
+}
+?>
+<?php
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
+        
+<script>
+function limpiar(){
+document.getElementById('formRegistro').reset();
+}
+function abrirMenu(valor){
+if(valor==0){
+document.getElementById("desplegable").style.display='block';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(1)";
+}
+if(valor==1){
+document.getElementById("desplegable").style.display='none';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(0)";
+}
+return false;
+}
+</script> 
 </html>
