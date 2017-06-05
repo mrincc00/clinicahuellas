@@ -53,6 +53,22 @@
                         </div>
 
 	</body>
-
+<?php
+session_start();
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
+<script>
+function abrirMenu(valor){
+if(valor==0){
+document.getElementById("desplegable").style.display='block';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(1)";
+}
+if(valor==1){
+document.getElementById("desplegable").style.display='none';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(0)";
+}
+return false;
+}
+</script> 
 
 </html>
