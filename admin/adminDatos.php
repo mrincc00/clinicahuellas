@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -58,7 +58,13 @@
 						<label style="width:30%;float:left;text-align:right;padding-right:5%"for="password">Contraseña:</label><input disabled type="password" name="password" id="password" placeholder="Contraseña" style="width:70%; float:right;"/><br/><br/><br/>
 						<button type="button" style=" font-size:90%;" id="modificar" onclick="modificarDatos();"> Modificar datos</button>
 						<input type="submit" value="GUARDAR CAMBIOS" name="registrar" style="font-weight:900; font-size:90%;" disabled  id="guardar" onclick="guardarCambios();"/>
-                                              				
+                                                <?php session_start(); 
+$usuario=$_SESSION['usuario']; 
+$nombre=$_SESSION['nombre'];
+$password=$_SESSION['password'];
+$email=$_SESSION['email'];
+echo "<button type='button' style='font-size:90%;' onclick='rellenar(\"$usuario\",\"$password\",\"$nombre\",\"$email\"); cancelar();' id='botonCancelar' disabled>Cancelar</button>";	
+?>											
 					</form>					
 				</div>
 			</section>
@@ -87,7 +93,23 @@
                       if(valor==1) alert("Usuario modificado");
                  }
 	</script>
-       
+        <?php
+           include_once 'connect.php';
+           $usuario=$_SESSION["usuario"];
+           $password=$_SESSION["password"];
+           $nombre=$_SESSION["nombre"];
+           $email=$_SESSION["email"];
+           echo "<script>window.onload=function() {";
+          if (!empty($_GET)) {
+                $accion=$_GET['accion'];
+                echo "error($accion);";
+          }    
+           echo "rellenar('".$usuario."','".$password."','".$nombre."','".$email."');";
+           echo "}</script>";
+        ?>
+<?php
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
 <script>
 function abrirMenu(valor){
 if(valor==0){
