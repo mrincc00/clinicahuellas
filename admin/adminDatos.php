@@ -6,7 +6,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
-               
+                <script language="javascript" src="../assets/js/admin.js"></script>
 	</head>
 	<body>
 
@@ -58,11 +58,47 @@
 						<label style="width:30%;float:left;text-align:right;padding-right:5%"for="password">Contraseña:</label><input disabled type="password" name="password" id="password" placeholder="Contraseña" style="width:70%; float:right;"/><br/><br/><br/>
 						<button type="button" style=" font-size:90%;" id="modificar" onclick="modificarDatos();"> Modificar datos</button>
 						<input type="submit" value="GUARDAR CAMBIOS" name="registrar" style="font-weight:900; font-size:90%;" disabled  id="guardar" onclick="guardarCambios();"/>
-                                                					
+                                              				
 					</form>					
 				</div>
 			</section>
 
 	</body>
-           
+        <script type="text/javascript">
+                  function rellenar(usuario,password,nombre,email){
+                      document.getElementById("nombre").value=nombre;
+                      document.getElementById("email").value=email;
+                      document.getElementById("usuario").value=usuario;
+                      document.getElementById("password").value=password;
+                  }
+                  function cambiar(){
+                      var usuario=document.getElementById("usuario").value;
+                      var password=document.getElementById("password").value;
+                      var nombre=document.getElementById("nombre").value;
+                      var email=document.getElementById("email").value;
+                
+                      if(usuario.length==0 || password.length==0 || nombre.length==0 || email.length==0){
+                           alert("Todos los datos deben estar completos");
+                           return false;
+                      }
+                      return true;
+                  }
+                  function error( valor){
+                      if(valor==1) alert("Usuario modificado");
+                 }
+	</script>
+       
+<script>
+function abrirMenu(valor){
+if(valor==0){
+document.getElementById("desplegable").style.display='block';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(1)";
+}
+if(valor==1){
+document.getElementById("desplegable").style.display='none';
+document.getElementById("etiquetaMenu").onclick="return abrirMenu(0)";
+}
+return false;
+}
+</script>     
 </html>
