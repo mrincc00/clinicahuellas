@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -77,7 +77,24 @@ function error( valor){
                       if(valor==1) alert("Usuario modificado");
                  }
 	</script>
-        
+        <?php
+           include_once 'connect.php';
+           $usuario=$_SESSION["usuario"];
+           $password=$_SESSION["password"];
+           $nombre=$_SESSION["nombre"];
+           $email=$_SESSION["email"];
+           echo "<script>window.onload=function() {";
+          if (!empty($_GET)) {
+                $accion=$_GET['accion'];
+                echo "error($accion);";
+          }    
+           echo "rellenar('".$usuario."','".$password."','".$nombre."','".$email."');";
+           echo "}</script>";
+        ?>
+<?php
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
+
   <script>
 function abrirMenu(valor){
 if(valor==0){
