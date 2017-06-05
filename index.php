@@ -1,11 +1,11 @@
-
+<?php session_start(); ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
 		<title>Clínica Huellas</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
+		<link rel="stylesheet" href="assets/css/main.css" />
 	</head>
 	<body style="margin-bottom:5%">
         
@@ -58,7 +58,7 @@
 							</form>
 						</div>
 						
-						
+						<p> En caso de que no recuerde la contraseña:<a href="olvidoContra.php"> Olvidé mi contraseña.</a>
 						<br><br>Si aún no tienes tu propia cuenta: <a href="#registro">Registrate aquí.</a></p>
 						
 						
@@ -79,8 +79,32 @@
 							</header>
 							<div>
 								<img id="imagenIndice" src="images/fonto.jpg" style="">
-                                                                <p style='margin-right:5%; padding-top:2%; text-align: justify; color:black;'>Descripcion</p>
 								
+								<?php
+include 'connect.php';
+echo "<p style='margin-right:5%; padding-top:2%; text-align: justify; color:black;'>";
+if (!($sentencia = $conn->prepare("SELECT descripcion FROM `Datos` WHERE 1"))) {
+          echo "Fallo en la preparación: (" . $conn->errno . ") " . $conn->error;
+        }
+
+        if (!$sentencia->execute()) {
+          echo "Fallo la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+        }
+        if (!($result = $sentencia->get_result())) {
+		      echo "No se ha podido establecer la conexion con el servidor";
+	}
+	if ($result->num_rows > 0) {
+             $nombres = array();
+
+	     while($row = $result->fetch_array()){	    
+array_push($nombres,$row[0]);
+
+                  $descripcion=$row[0];
+                  echo $descripcion;
+              }
+         }
+         echo "</p>";
+?>
 							</div>
 							
 						</article>	
@@ -123,5 +147,88 @@
 
 		
 	</body>
+	<script type="text/javascript">
 	
+	function abrirPerfilCliente(){
+               var usuario=document.getElementById("userCliente").value;
+               var pass=document.getElementById("passCliente").value;
+
+               if(usuario.length==0 || pass.length==0){
+                    alert("Debes completar los datos para acceder");
+                    return false;
+               }
+               return true;
+        }
+        function abrirPerfilAdmin(){
+               var usuario=document.getElementById("userAdmin").value;
+               var pass=document.getElementById("passAdmin").value;
+
+               if(usuario.length==0 || pass.length==0){
+                    alert("Debes completar los datos para acceder");
+                    return false;
+               }
+               return true;
+        }
+        function abrirPerfilVet(){
+               var usuario=document.getElementById("userVet").value;
+               var pass=document.getElementById("passVet").value;
+
+               if(usuario.length==0 || pass.length==0){
+                    alert("Debes completar los datos para acceder");
+                    return false;
+               }
+               return true;
+        }
+        function validarRegistro(){
+               var nombre=document.getElementById("nombre").value;
+               var email=document.getElementById("email").value;
+               var usuario=document.getElementById("usuarioNuevo").value;
+               var pass=document.getElementById("contraNueva").value;
+               var confirmPass=document.getElementById("confirm").value;
+
+               if((nombre.length==0 || usuario.length==0 || email.length==0 ||pass.length==0) || (/^\s+|\s+$/.test(nombre)|| /^\s+|\s+$/.test(usuario) || /^\s+|\s+$/.test(email) || /^\s+|\s+$/.test(pass) )){
+			alert("Por favor, rellene todos los campos con carácteres válidos.");
+			return false;
+		}
+                else{
+                       if(usuario.length<5){
+				alert("El nombre de usuario debe de tener una longitud mínima de 5 caracteres.");
+				return false;
+			}
+			if(pass.length<5 || confirmPass.length<5){
+				alert("La contraseña debe de tener una longitud mínima de 5 caracteres.");
+				return false;
+			}
+				
+			/** Comprobamos que las contraseñas son iguales */
+				
+			else if(pass!=confirmPass){
+				alert("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.");
+				return false;
+			}
+                }
+                return true;
+        }
+        function error( valor){
+            if(valor==1) alert("Debe introducir los datos correctos");
+            if(valor==2) alert("Registro completado");
+            if(valor==3) alert("Usuario ocupado, pruebe de nuevo con otro");
+        }
+	</script>
+        <?php 
+             echo "<script>";
+             $error=$_GET['error'];
+             echo " document.getElementsByTagName('body')[0].onload=function(){";
+             echo "error($error);";
+             echo "}</script>";
+        ?>
+        <?php
+           if($_SESSION['usuario']!=null){
+            
+            $tipo=$_SESSION['tipo'];
+             if($tipo==1) echo "<script>window.onload=function(){setTimeout(\"location.href='cliente/clienteDatos.php'\", 1);}</script>";
+             if($tipo==2) echo "<script>window.onload=function(){setTimeout(\"location.href='admin/adminDatos.php'\", 1);}</script>";
+             if($tipo==3) echo "<script>window.onload=function(){setTimeout(\"location.href='personal/personalDatos.php'\", 1);}</script>";
+           }
+        ?>
 </html>
