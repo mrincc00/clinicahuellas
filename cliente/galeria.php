@@ -50,18 +50,34 @@
 
 		<!-- Three -->
 		<div id="vlightbox" style="margin:0 5% 0 5%">
-
-                    <a id='firstImage' title='consulta.jpg' href='images/consulta.jpg' class='vlightbox'><img alt='consulta.jpg' src='images/consulta.jpg' /></a>
-                    <a  title='consulta1.jpg' href='images/consulta1.jpg' class='vlightbox'><img alt='consulta1.jpg' src='images/consulta1.jpg' /></a>
-                    <a  title='consulta2.jpg' href='images/consulta2.jpg' class='vlightbox'><img alt='consulta2.jpg' src='images/consulta2.jpg' /></a>
-                </div>
+<?php
+$directorio = "images";
+$gestor_dir = opendir($directorio);
+while (false !== ($nombre_fichero = readdir($gestor_dir))) {
+    $ficheros[] = $nombre_fichero;
+}
+sort($ficheros);
+$num=count($ficheros);
+ for($i=2; $i<$num; $i++){
+ $imagen=$i-1;
+$primero="";
+ if($imagen==1) $primero="id='firstImage'";
+ echo "<a $primero title='$ficheros[$i]' href='images/$ficheros[$i]' class='vlightbox'><img alt='$ficheros[$i]' src='images/$ficheros[$i]' /></a>\n";
+}
+?>
+		</div>
 		<script type="text/javascript">
 			var $VisualLightBoxParams$ = {autoPlay:true,borderSize:21,enableSlideshow:true,overlayOpacity:0.4,startZoom:true};
 		</script>
 		<script type="text/javascript" src="visuallightbox.js"></script>	
 
-	</body>
 
+
+	</body>
+<?php
+session_start();
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
 <script>
 function abrirMenu(valor){
 if(valor==0){

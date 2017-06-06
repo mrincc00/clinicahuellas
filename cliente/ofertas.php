@@ -48,34 +48,87 @@
 
 		<!-- Three -->
                 <div id="ofertas" style="margin:5% 0 5% 0; color:black; text-align:center;">
-                    <div class='ofertaMedia' style='background-color:rgba(255,154,52,0.7); /*width:$tam%; */border-radius:30px; margin-left:5%; margin-bottom:2%; border:1px solid black; float:left;'>
-                       <h2><strong>oferta</strong></h2>
-                       <p>El pack oferta incluye:</p>
-                       <ul style='text-align:left; margin-left:15%;' >
-                           <li>Bono 5 cortes de pelo</li>
-                           <li>Saco 5kg de pienso</li>
-                       </ul>
-                       <h2><strong>58 €</strong></h2> 
-                    </div>
-                    <div class='ofertaMedia' style='background-color:rgba(255,154,52,0.7); /*width:$tam%; */border-radius:30px; margin-left:5%; margin-bottom:2%; border:1px solid black; float:left;'>
-                       <h2><strong>oferta 2</strong></h2>
-                       <p>El pack oferta 2 incluye:</p>
-                       <ul style='text-align:left; margin-left:15%;' >
-                           <li>Colocacion de chip de tu mascota</li>
-                           <li>Primeras vacunas necesarias</li>
-                       </ul>
-                       <h2><strong>39 €</strong></h2> 
-                    </div>
 		    
                        
 
-                                     
+                    <?php
+                     include '../connect.php';
+if (!($sentencia = $conn->prepare("SELECT id,titulo,precio FROM `Ofertas` WHERE 1"))) {
+          echo "Fallo en la preparación: (" . $conn->errno . ") " . $conn->error;
+        }
+
+        if (!$sentencia->execute()) {
+          echo "Fallo la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+        }
+        if (!($result = $sentencia->get_result())) {
+		      echo "No se ha podido establecer la conexion con el servidor";
+	}
+	if ($result->num_rows > 0) {
+
+             if($result->num_rows==1){ $tam=80; $class='ofertaGrande';}
+             if($result->num_rows%2==0){ $tam=40; $class='ofertaMedia';}
+             if($result->num_rows%2!=0){ $tam=26; $class='ofertaPeque';}
+             $nombres = array();
+             
+	     while($row = $result->fetch_array()){	    
+               array_push($nombres,$row[0],$row[1],$row[2]);
+
+               $id=$row[0];
+               $titulo=$row[1];
+               $precio=$row[2];
+
+               echo "<div class='$class' style='background-color:rgba(255,154,52,0.7); /*width:$tam%; */border-radius:30px; margin-left:5%; margin-bottom:2%; border:1px solid black; float:left;'>
+                       <h2><strong>$titulo</strong></h2>
+                       <p>El pack $titulo incluye:</p>
+                       <ul style='text-align:left; margin-left:15%;' id='caract$id'>
+                       </ul>
+                       <h2><strong>$precio €</strong></h2> 
+                    </div>";
+             
+             }
+        }
+        else{
+             echo "<p> No existen ofertas aún.</p>";
+        }
+
+                    ?>                 
                 </div>
 
+<?php
+include '../connect.php';
+echo "<script>window.onload=function(){\n";
+if (!($sentencia = $conn->prepare("SELECT descripcion,idOferta FROM `caracteristicas` WHERE 1"))) {
+          echo "Fallo en la preparación: (" . $conn->errno . ") " . $conn->error;
+        }
 
+        if (!$sentencia->execute()) {
+          echo "Fallo la ejecución: (" . $sentencia->errno . ") " . $sentencia->error;
+        }
+        if (!($result = $sentencia->get_result())) {
+		      echo "No se ha podido establecer la conexion con el servidor";
+	}
+	if ($result->num_rows > 0) {
+             $nombres = array();
+
+	     while($row = $result->fetch_array()){	    
+               array_push($nombres,$row[0],$row[1]);
+
+               $descrip=$row[0];
+               $id=$row[1];
+               echo "var lista= document.getElementById('caract$id');
+                     var li = document.createElement('li');
+                     li.appendChild(document.createTextNode('$descrip'));
+                     lista.appendChild(li);\n";
+             }
+        }
+echo "}</script>";
+?>
 	</body>
 
-
+<?php
+session_start();
+if($_SESSION==null)  echo "<script>document.getElementsByTagName('body')[0].onload=function(){setTimeout(\"location.href='../index.php'\", 1);}</script>";
+?>
 <script>
 function abrirMenu(valor){
 if(valor==0){
