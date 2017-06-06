@@ -3181,6 +3181,11 @@ border-radius:30px;
 
 		}
 /*Cliente*/
+#citasPersonal{ display:none; margin-left:5%; margin-right:5%; overflow-x:scroll; overflow-y:hidden;} 
+#frmPersonal { width:50%; text-align:center; margin:auto;}
+#formulario{ width:50%; float:right; display:none;}
+#citas{ width:40%; float:left; display:none; margin-left:5%; overflow-x:scroll; overflow-y:hidden;}
+#frm{ width:50%; text-align:center; margin:auto;}
 #imagen{width:200px; height:200px; float:left; display:none; margin-top:10%;  background-image:''; background-size:contain; background-repeat:no-repeat; }
 #subirFoto{width:40%; float:right; display:inline; margin:5% 5% 2% 0; border:1px solid black; padding:5% 5% 5% 5%; border-radius:30px;}
 #galeriaActual{width:35%; float:left; display:inline; margin-left:5%; margin-bottom:2%;}
@@ -3255,6 +3260,7 @@ position:absolute; bottom:20%; left:2%; width:10%;
 			}
    #mascotas{
     width:90%;
+    overflow-x:scroll;
    }
 
 }
@@ -3378,4 +3384,8 @@ width:80%;
 #galeriaActual{width:90%; float:left; margin-left:5%; margin-right:5%;}
 #subirFoto{width:90%; float:left; margin-left:5%; margin-right:5%; border:1px solid black; padding:5% 5% 5% 5%; border-radius:30px;}
 #imagen{width:90%; height:200px; float:left; display:none;  margin:0 5% 10% 5%;  background-image:''; background-size:contain; background-repeat:no-repeat; }
+#frm{ text-align:center; margin:auto; width:100%;}
+#citas{ width:100%; display:none; margin-left:5%; }
+#formulario{ width: 100%;  display:none;}
+#frmPersonal{ text-align:center; margin:auto; width:100%;}
 }}
