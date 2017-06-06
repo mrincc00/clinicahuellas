@@ -7,8 +7,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="../assets/css/main.css" />
                 <script language="javascript" src="../assets/js/cliente.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script language="javascript" src="js/jquery-1.2.6.min.js"></script>
 
 	</head>
 	<body id="body">
@@ -68,9 +66,9 @@ $email=$_SESSION['email'];
 echo "<button type='button' style='font-size:60%;' onclick='rellenar(\"$usuario\",\"$password\",\"$nombre\",\"$email\"); cancelarUsuario();' id='botonCancelarUsuario' disabled>Cancelar</button>";	
 ?>						
 					</form>
-					<div id="mascotas" style="">
+					<div id="mascotas" style="overflow-x:scroll; overflow-y:hidden;">
 						<h1><strong> MASCOTAS </strong></h1>
-						<table id="myTable" >
+						<table id="myTable">
 							<tr>
 								<th> Nombre </th>
 								<th> Raza </th>
@@ -142,9 +140,17 @@ echo"\n";
                   function error( valor){
                       if(valor==1) alert("Usuario modificado");
                   }
-                  function abrir(id){
 
-                      window.open('historial.php?id='+id,'child','top=200,left=400,width=600,height=400') ; 
+                  function abrir(id){
+document.getElementById('mascotas').innerHTML += "<form  id='formHistorial' method='POST' action='popup.php' target='nueva' >";
+   var form=document.getElementById('formHistorial');
+   form.style.display='none';
+   var input=document.createElement('input');
+   input.name='mascota';
+   input.value=id;
+   input.type='text';   
+form.appendChild(input); 
+form.submit();                      
                   }
                   function cambiarBotones(valor,id){
                       var fila=valor;
